@@ -1,0 +1,204 @@
+\documentclass[twocolumn]{article}
+
+% Packages
+\usepackage{graphicx} % For including images
+\usepackage[utf8]{inputenc} % UTF-8 encoding
+\usepackage[english, greek]{babel} % English and Greek languages
+\usepackage{amsmath, amssymb} % Math symbols
+\usepackage{geometry} % Page geometry
+\usepackage{titlesec} % Section formatting
+\usepackage{hyperref} % Clickable links
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    citecolor=blue
+}
+\usepackage{biblatex} % Bibliography
+\addbibresource{references.bib} % Bibliography file
+\usepackage{booktabs} % For better table formatting
+\usepackage{caption} % For table captions
+
+% Geometry
+\geometry{a4paper, margin=1in}
+
+% Custom commands for language switching
+\newcommand{\en}[1]{\foreignlanguage{english}{#1}}
+\newcommand{\gr}[1]{\foreignlanguage{greek}{#1}}
+
+% Title Formatting
+\title{\vspace{-2cm}\includegraphics[width=0.3\textwidth]{ionio.png} \\
+\vspace{1cm}
+\textbf{\en{Evaluation of Machine Translation: Greek to English}}\\
+\vspace{0.5cm}
+\large \en{\en{Stefanos Sfinarolakis (inf2021218)} \\
+\en{Nikolaos Trypakis (inf2021229)} \\
+\en{Konstantinos Kafteranis (inf2021090)}
+}}
+\author{}
+\date{}
+
+% Section Formatting
+\titleformat{\section}[block]{\Large\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}[block]{\large\bfseries}{\thesubsection.}{1em}{}
+
+\begin{document}
+
+% Cover Page
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+% Abstract
+\section*{\en{Abstract}}
+\en{
+Machine Translation (MT) has made significant strides, yet languages like Greek, with intricate syntactic structures, remain underexplored. This study investigates the challenges faced by MT systems in translating Greek to English, specifically focusing on negation, coordination, subjunction, punctuation, and metaphors. Using two large language models (LLMs), Claude and Microsoft Copilot, we evaluate their translation accuracy across 1,500 Greek sentences. Our findings reveal that Copilot excels with basic sentence structures, while Claude performs better with complex contexts. Through BLEU score analysis and error assessment, we highlight the difficulties in handling idiomatic expressions and scientific terminology. Further research is needed to improve LLM performance for low-resource languages and specialized linguistic features.
+}
+
+% Main Content
+\section{\en{Introduction}}
+\en{Machine Translation has become a widely used tool in the realm of natural language processing (NLP), making communication easier and bridging the linguistic gaps among languages. MT systems have shown significant progress, but their best performance is also seen in the most famous and widely spoken languages, such as English, Spanish, or Chinese. 
+
+
+Less common languages like Greek are underrepresented, making even state-of-the-art tools struggle with Greek-to-English translation sometimes. Greek is a complex language with lots of grammar rules and flexible sentence structures, which makes it tricky for machine translation (MT) systems. Unlike English, Greek uses things like flexible word order, detailed verb forms, and case markers to show meaning. These features can be hard to translate into English, which follows stricter grammar rules. This often leads to mistakes or loss of meaning in translations. Another big challenge is the lack of good-quality, large datasets for translating Greek to English. Without enough data, it’s hard to train MT systems to handle the unique features of Greek. As a result, Greek is often overlooked in MT research, with most efforts focused on bigger, more commonly used languages.
+
+
+In this study, we aim to assess the effectiveness of Greek-to-English MT by reviewing existing literature and identifying the key challenges discussed in previous research. We then focus on specific grammatical phenomena of interest and compile a dataset to address these aspects. Furthermore, we conduct our own experiments using two different large language models (LLMs) to explore their capabilities and limitations in translating between Greek and English. By comparing their performance, we gain insights into the strengths and weaknesses of these models for this specific language pair.}
+
+\section{\en{Methodology}}
+\en{In this section, we outline the steps taken in our research. First, we review existing literature on Greek-to-English Machine Translation (MT) to identify key challenges and approaches. Then, we describe our experimental methodology using two large language models (LLMs), Claude and Microsoft Copilot. Finally, we introduce the dataset used in our experiments, explain its linguistic structure, and detail the evaluation metrics and error analysis approach.}
+
+\subsection{\en{Overview of Large Language Models}}
+\en{To evaluate the performance of MT for Greek-to-English translation, we employ two prominent LLMs:}
+
+\en{\begin{itemize}
+    \item \textbf{\en{Claude}}:  
+    \en{Claude is a state-of-the-art language model designed for a range of natural language processing (NLP) tasks. It is particularly noted for its conversational abilities and its capacity to process nuanced linguistic phenomena. Claude utilizes advanced transformer-based architectures and has been trained on diverse datasets, enabling it to handle complex sentence structures.}
+
+    \item \textbf{\en{Microsoft Copilot}}:  
+    \en{Microsoft Copilot is an AI assistant that integrates advanced NLP capabilities into various applications. It leverages models from the OpenAI ecosystem, such as GPT, to perform translation tasks. While not explicitly designed for MT, Copilot demonstrates strong contextual understanding and adaptability across languages.}
+\end{itemize}}
+
+\subsection{\en{Dataset}}
+\en{The dataset used in our experiments consists of 1,500 sentences from \href{https://huggingface.co/Helsinki-NLP/opus-mt-tc-big-el-en/tree/main}{here}, divided into five linguistic phenomena  encountered in Greek-to-English translation, that we choose. Our criteria for phenomena selection has to do with our assumption based on the bibliogrpahy that most difficult thing to translate are phrases with special caltural meaning. The rest were chosen based on the easy identification throught regular expressions using a script to detect with a script we created. These phenomena along the number of sentances are described as follows:}
+
+\begin{itemize}
+    \item \textbf{\en{Negation (629)}}:  
+    \en{Negation in Greek often involves multiple words or flexible syntax, posing challenges for accurate translation into English, which generally uses fixed patterns for negation.}
+
+    \item \textbf{\en{Coordination (401)}}:  
+    \en{Greek's coordination structures, which often allow ellipsis or flexible conjunctions, may result in ambiguities when translated into English.}
+
+    \item \textbf{\en{Subjunction (138)}}:  
+    \en{Subjunction involves subordinate clauses, which in Greek can exhibit diverse word orders and conjunctions that do not always directly map to English equivalents.}
+
+    \item \textbf{\en{Punctuation} (332)}:  
+    \en{Greek punctuation rules differ slightly from English, with variations in the usage of commas and quotation marks, affecting sentence segmentation during translation.}
+
+    \item \textbf{\en{Metaphors and Special Phrases (10)}}:  
+    \en{Greek frequently employs metaphors and idiomatic expressions that require cultural or contextual understanding for accurate translation into English.}
+\end{itemize}
+
+\subsection{\en{Evaluation and Error Analysis}}
+\en{The translation quality is evaluated using the \href{https://translate.tilde.ai/bleu#/}{BLEU} (Bilingual Evaluation Understudy) metric. The process includes the following steps:}
+\begin{itemize}
+    \item \en{Translations are generated using both Claude and Microsoft Copilot for each linguistic phenomenon.}
+    \item \en{BLEU scores are calculated for each phenomenon individually and for the entire dataset as a whole.}
+    \item \en{Errors are analyzed to identify patterns, such as specific mistakes made by each model.}
+\end{itemize}
+
+\en{This methodology allows us to assess the relative strengths and weaknesses of the two LLMs .}
+
+\section{\en{Literature Overview}}
+\en{The development of Neural Machine Translation (NMT) models based on the Transformer architecture has shown significant progress in handling Greek and English translations. These models excel at tasks such as translating Greek text, extracting triplets, and retranslating back to Greek, outperforming current methods for the Greek language. However, challenges remain in accurately interpreting culturally charged expressions, highlighting the complexity of reconciling linguistic and cultural nuances \cite{penelopie2021}. Early systems such as METIS and METIS-II used statistical data and monolingual corpora without bilingual resources for Greek-English translation, while Uplug, a word-alignment system, contributed to the creation and evaluation of a reliable Greek-English bilingual dictionary. Research has also compared the performance of KantanMT and Moses statistical translation systems within a cross-lingual information retrieval (CLIR) framework, noting the superior average accuracy of KantanMT despite the morphological complexity of Greek \cite{penelopie2021}; \cite{kolovou2023machine}.
+
+In addition, multilingual models often have limitations due to their predominant training on English data, resulting in reduced accuracy for low-resource languages. Reliance on low-quality or automated translations contributes to errors, while the Anglophone bias of these systems risks distorting local cultural meanings and making inappropriate associations. These challenges extend to other domains, as demonstrated by a multilingual mental health dataset developed for severity prediction in languages such as Turkish, French, Portuguese, German, Greek, and Finnish. The dataset revealed significant prediction variability and lower accuracy in low-resource languages due to cultural nuances, limited data, inconsistent translations, and inadequate error correction. These findings highlight the need to use Large Language Models (LLMs) as assistive rather than autonomous tools for mental health professionals, paralleling broader multilingual NLP issues \cite{Skianis2024}; \cite{kolovou2023machine}.
+
+In addition, structural, semantic, and syntactic divergences between languages add further complexity to the task of aligning language representations. These divergences, especially between morphologically rich and resource-constrained languages, pose significant challenges for multilingual models. The inability to fully capture cultural and contextual subtleties often results in degraded translation quality and biased associations, underscoring the urgent need for novel approaches to address linguistic differences and improve model effectiveness \cite{nicholas2023lost}.
+
+The lack of sufficient bilingual resources and the reliance on monolingual corpora also exacerbate these challenges. Studies show that low-resource language translations in particular suffer from significant context loss, which affects downstream applications. In addition, the design and evaluation of language-specific pre-training schemes to overcome these hurdles are highlighted as critical steps forward. They emphasize the need to address the lack of domain-specific vocabularies and the over-reliance on generalized linguistic data, which hinder the performance of linguistic models in various applications, including minority language scenarios \cite{Khade2024}}
+
+\section{\en{Experimental Results}}
+
+\subsection{\en{Numeric Results}}
+\en{The numeric results are shown in tables 1 and 2}
+\renewcommand{\arraystretch}{1.5} % Adjust row height
+\setlength{\tabcolsep}{10pt} % Adjust column separation
+\begin{table*}[ht]
+    \centering
+    \begin{tabular}{|l|c|c|c|}
+        \hline
+        \textbf{\en{Grammatical Phenomenon}} & \textbf{\en{Number of Sentences}} & \textbf{\en{Score (Copilot)}} & \textbf{\en{Score (Claude)}} \\
+        \hline
+        \en{Negation}            & 629  & 57.14  & 60.55  \\
+        \en{Coordination}  & 401  & 21.21  & 47.05 \\
+        \en{Subjunctions}        & 138  & 26.54 & 49.38  \\
+        \en{Punctuation}   & 332 & 59.97 & 59.79 \\
+        \en{Metaphor/Special Phrase}        & 10  & 27.69  & 40.21  \\
+        \hline
+    \end{tabular}
+    \caption{\en{Linguistic phenomena analysis: number of sentences and BLEU scores by Microsoft Copilot and Claude.}}
+    \label{tab:grammatical_analysis}
+\end{table*}
+
+\begin{table}[h!]
+\centering
+\caption{\en{Error Analysis of Translations}}
+\label{tab:error-analysis}
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|p{3.2cm}|p{3.2cm}|p{3.2cm}|p{3.2cm}|p{4cm}|}
+\hline
+\en{Original (\en{Greek})} & \en{Expected Translation} & \en{Copilot Translation} & \en{Claude Translation} & \en{Comments} \\ \hline
+
+\gr{Kάλλιο πέντε και στο χέρι, παρά δέκα και καρτέρει.} & \en{A bird in the hand is worth two in the bush.} & \en{Better five in hand than ten waiting.} & \en{Better five in hand than ten waiting.} & \en{The models translated word by word, failing to understand the metaphorical meaning of the phrase.} \\ \hline
+
+\gr{Ανακοινώθηκε πως η αιτία του θανάτου ήταν ο καρκίνος των ενδοηπατικών χοληφόρων οδών.} & \en{The cause of death was announced as intrahepatic bile duct cancer.} & \en{It was announced that the cause of death was cancer of the intrahepatic bile ducts.} & \en{It was announced that the cause of death was cholangiocarcinoma.} & \en{The models struggled with the subjunction structure, causing variations in how the disease was named.} \\ \hline
+
+\gr{Ανεξαρτησία; Δεν ενδιαφέρομαι.} & \en{Independence? I'm not interested.} & \en{Independent? I’m not interested.} & \en{Independent? I’m not interested.} & \en{The models translated "Ανεξαρτησία" as "Independent" instead of "Independence," which changed the meaning of the sentence.} \\ \hline
+
+\gr{Γύρισε το χερούλι για να ανοίξει την πόρτα.} & \en{She turned the handle to open the door.} & \en{Turn the handle to open the door.} & \en{Turn the handle to open the door.} & \en{The models missed the subject "She," giving a more general translation.} \\ \hline
+
+\gr{Δεν απάντησε.} & \en{She didn’t answer.} & \en{He didn’t answer.} & \en{He didn’t answer.} & \en{The models incorrectly translated the subject "She" as "He."} \\ \hline
+
+\gr{Ξέρουν ότι είσαι εδώ;} & \en{Do they know you're here?} & \en{They know you are here.} & \en{Do they know you are here?} & \en{The machines missed the tone of the Greek sentence, which is important for the correct translation.} \\ \hline
+
+\gr{Ξεχωρίζω σαν την μύγα μες το γάλα.} & \en{I stick out like a sore thumb.} & \en{I stand out like a sore thumb.} & \en{I stand out like a fly in milk.} & \en{One model incorrectly translated the phrase word by word, while the other used the appropriate English idiom.} \\ \hline
+
+\gr{Ο Τομ είναι γυμνός από τη μέση και πάνω.} & \en{Tom is naked from the waist up.} & \en{Tom is naked from the waist up.} & \en{Tom is shirtless.} & \en{Claude used "shirtless" instead of translating the phrase directly.} \\ \hline
+
+\gr{Έχει μάτια και στην πλάτη.} & \en{She has eagle eyes.} & \en{He has eyes in the back of his head.} & \en{He has eyes in the back of his head.} & \en{The machines translated word by word instead of understanding the meaning of the phrase.} \\ \hline
+
+\gr{Κάποια άτομα έχουν μη σταθερούς πυρήνες και αυτό τα οδηγεί στη διάσπαση αν τους ασκηθεί μικρή ή ακόμα και καθόλου πίεση.} & \en{Some atoms have unstable nuclei which means that they tend to break apart with little or no nudging.} & \en{Some individuals have unstable nuclei, leading them to decay under little or no pressure.} & \en{Some people have unstable cores that lead them to disintegration if even little or no pressure is applied.} & \en{The models mistakenly translated "atoms" as "people" or "individuals" instead of understanding the scientific context.} \\ \hline
+
+\gr{Κάποιου του χάριζαν ένα γάιδαρο και τον κοίταζε στα δόντια.} & \en{Don’t look a gift horse in the mouth.} & \en{Someone was given a donkey as a gift, and they were looking at its teeth.} & \en{Someone was being given a donkey and was looking it in the mouth.} & \en{The machines translated word by word instead of understanding the meaning of the phrase.} \\ \hline
+
+\end{tabular}
+}
+\end{table}
+
+\subsection{\en{Limitations}}
+\en{This approach has several limitations:}
+
+\begin{itemize}
+    \item \textbf{\en{Dataset Size:}} \en{The dataset is small, with only 1,500 sentences, limiting the diversity and complexity of linguistic phenomena tested.}  
+    \item \textbf{\en{Simple Linguistic Phenomena:}} \en{Most of the phenomena, such as negation and coordination, are generally easy for modern LLMs to handle.}  
+    \item \textbf{\en{Limited Metaphors and Special Phrases:}} \en{The dataset included only 10 sentences for metaphors and special phrases, which are the most challenging category. This small sample size makes it difficult to fully assess model performance, even though many cases were handled reasonably well.}  
+    \item \textbf{\en{Limitations of BLEU Metric:}}  
+    \begin{itemize}
+        \item \en{BLEU penalizes minor differences, such as "cannot" vs. "can't," even when the meaning is correct.}  
+        \item \en{It evaluates full sentences, where a small mistake can significantly lower the score.}  
+        \item \en{BLEU may fail to reward valid translations that differ in phrasing from the reference.}  
+    \end{itemize}
+\end{itemize}
+
+\en{These limitations suggest that while the study provides useful insights, it does not fully capture the models' strengths, especially for nuanced translation tasks.}
+
+
+\section{\en{Conclusions and Proposals}}
+\en{Nowadays, MT models are advanced and generally perform really well on translating individual sentences, however some problems may still occur. After testing the five phenomenons we mentioned before, it seems that both models manage to identify almost correctly punctuation (Copilot: 59.97, Claude: 59.79) and negation (57.14, 60.55). For coordination, Copilot seems to suffer (21.21) while Claude manages to get double the score (47.05). Similarly, Copilot struggles with subjunctions (26.54) while Claude looks more confident (49.38). The failure to recognise these two phenomenons can lead to different syntactical linking of the words within the sentence making it difficult to express its original meaning. However, this was a rare case and the low score is due to Bleu’s limitations on interpreting the sentences rather than the models themselves. As expected and understood from our bibliography, both Copilot and Claude appear to have a problem with metaphors and phrases (27.69, 40.21). They tend to translate them literally instead of understanding the intended meaning. However, Claude seems to perform quite better than Copilot in terms of handling complex phrases, as it is more likely to choose accurate technical terms. Most mistakes, aside from special phrases, were random false recognition of punctuation symbols and change of words. Those cases were not common and don’t indicate any significant pattern. One last thing of significance is the gender misinterpretation which makes sense since without the right context the models has to just take a guess. 
+Lastly, we would like the suggest as a continuation of this research to use bigger dataset of special phrases and AI models specifically trained on greek to english instead these widely used LLMs presented in this work. }
+% References
+\section{\en{Refernces}}
+\en{\printbibliography}
+
+\end{document}
